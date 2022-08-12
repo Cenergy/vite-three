@@ -1,7 +1,5 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-// 导入动画库
-import gsap from "gsap";
 
 const scene = new THREE.Scene();
 const geometry = new THREE.BoxGeometry(1, 1, 1);
@@ -35,23 +33,13 @@ mesh.scale.set(3, 1, 1);
 
 const clock = new THREE.Clock();
 
-// 设置动画
-gsap.to(mesh.position, {
-  x: 5,
-  duration: 5,
-  ease: "power1.inOut",
-  // 设置重复的次数
-  repeat: -1,
-  // 往返的运动
-  yoyo: true,
-  // 延迟时间
-  delay:2,
-  onComplete: () => {
-    console.log("🚀 ~ file: index.js ~ line 47 ~ 动画 onComplete");
-  },
-});
-gsap.to(mesh.rotation, { x: 2 * Math.PI, duration: 5, repeat: -1 });
 function renderScene() {
+  // 运行总时长
+  const elapsedTime = clock.getElapsedTime();
+  // 两次获取的间隔时常
+  const deltaTime = clock.getDelta();
+  const t = elapsedTime % 5;
+  mesh.position.x = t * 1;
   render.render(scene, camera);
 
   requestAnimationFrame(renderScene);
