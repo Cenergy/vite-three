@@ -3,24 +3,11 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 // 导入动画库
 import gsap from "gsap";
 import * as dat from "dat.gui";
-const { BufferGeometry, Float32BufferAttribute } = THREE;
 
 const scene = new THREE.Scene();
-
-const g = new BufferGeometry();
-const v = new Float32Array([
-  -1.0, -1.0, 1.0,
-   1.0, -1.0, 1.0,
-    1.0, 1.0, 1.0,
-    1.0, 1.0, 1.0,
-    -1.0, 1.0, 1.0,
-    -1.0, -1.0, 1.0,
-]);
-g.setAttribute('position',new THREE.BufferAttribute(v,3));
-
 const geometry = new THREE.BoxGeometry(1, 1, 1);
 const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-const mesh = new THREE.Mesh(g, material);
+const mesh = new THREE.Mesh(geometry, material);
 
 scene.add(mesh);
 
