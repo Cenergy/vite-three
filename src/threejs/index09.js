@@ -7,29 +7,16 @@ const { BufferGeometry, Float32BufferAttribute } = THREE;
 
 const scene = new THREE.Scene();
 
-// load texture
-const texture = new THREE.TextureLoader();
-const textureColor = texture.load("/door.png");
-// 设置纹理的偏移
-// textureColor.offset.set(0.5, 0.5);
-// 设置纹理的旋转原点
-// textureColor.center.set(0.5, 0.5);
-// 设置纹理重复
-textureColor.repeat.set(2, 3);
-// 设置纹理重复模式
-textureColor.wrapS = THREE.MirroredRepeatWrapping;
-textureColor.wrapT = THREE.RepeatWrapping;
-// 设置纹理的旋转角度
-// textureColor.rotation = Math.PI / 4;
-// 物体
+const g = new BufferGeometry();
+const v = new Float32Array([
+  -1.0, -1.0, 1.0, 1.0, -1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, -1.0, 1.0, 1.0,
+  -1.0, -1.0, 1.0,
+]);
+g.setAttribute("position", new THREE.BufferAttribute(v, 3));
+
 const geometry = new THREE.BoxBufferGeometry(1, 1, 1);
-// 材质
-const material = new THREE.MeshBasicMaterial({
-  color: "#ffff00",
-  map: textureColor,
-});
-// 实体
-const mesh = new THREE.Mesh(geometry, material);
+const material = new THREE.MeshBasicMaterial({ color: "#ffff00" });
+const mesh = new THREE.Mesh(g, material);
 
 scene.add(mesh);
 
@@ -53,8 +40,8 @@ scene.add(axesHelper);
 // 创建轨道控制器
 const controls = new OrbitControls(camera, render.domElement);
 
-// mesh.rotation.set(Math.PI / 4, 0, 0, "XZY");
-// mesh.scale.set(3, 1, 1);
+mesh.rotation.set(Math.PI / 4, 0, 0, "XZY");
+mesh.scale.set(3, 1, 1);
 
 const clock = new THREE.Clock();
 
