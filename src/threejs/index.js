@@ -7,31 +7,69 @@ const { BufferGeometry, Float32BufferAttribute } = THREE;
 
 const scene = new THREE.Scene();
 
+// 置换材质
 // load texture
 const texture = new THREE.TextureLoader();
 const textureColor = texture.load("/door.png");
+// const textureColor = texture.load("/textures/minecraft.png");
+const alphaTextureColor = texture.load("/textures/door/alpha.jpg");
+const aoTextureColor = texture.load("/textures/door/ambientOcclusion.jpg");
+const heightTextureColor = texture.load("/textures/door/height.jpg");
+const roughnessTextureColor = texture.load("/textures/door/roughness.jpg");
 // 设置纹理的偏移
 // textureColor.offset.set(0.5, 0.5);
 // 设置纹理的旋转原点
-// textureColor.center.set(0.5, 0.5);
+// textureColor.center.set(0.5, 0.5)
 // 设置纹理重复
-textureColor.repeat.set(2, 3);
-// 设置纹理重复模式
-textureColor.wrapS = THREE.MirroredRepeatWrapping;
-textureColor.wrapT = THREE.RepeatWrapping;
+// textureColor.repeat.set(2, 3);
+// // 设置纹理重复模式
+// textureColor.wrapS = THREE.MirroredRepeatWrapping;
+// textureColor.wrapT = THREE.RepeatWrapping;
 // 设置纹理的旋转角度
 // textureColor.rotation = Math.PI / 4;
 // 物体
-const geometry = new THREE.BoxBufferGeometry(1, 1, 1);
+
+// 设置纹理的显示
+// textureColor.minFilter = THREE.NearestMipMapLinearFilter;
+// textureColor.magFilter = THREE.LinearFilter;
+const geometry = new THREE.BoxBufferGeometry(1, 1, 1, 50, 50, 50);
+geometry.setAttribute(
+  "uv2",
+  new THREE.BufferAttribute(geometry.attributes.uv.array, 2)
+);
 // 材质
-const material = new THREE.MeshBasicMaterial({
+const material = new THREE.MeshStandardMaterial({
   color: "#ffff00",
   map: textureColor,
+  alphaMap: alphaTextureColor,
+  transparent: true,
+  // opacity:0.3,
+  side: THREE.DoubleSide,
+  aoMap: aoTextureColor,
+  aoMapIntensity: 0.9,
+  displacementMap: heightTextureColor,
+  displacementScale: 0.05,
+  roughness: 1,
+  roughnessMap: roughnessTextureColor,
 });
 // 实体
 const mesh = new THREE.Mesh(geometry, material);
 
 scene.add(mesh);
+
+// 添加平面
+const plane = new THREE.Mesh(new THREE.PlaneBufferGeometry(1, 1), material);
+plane.position.set(3, 0, 0);
+scene.add(plane);
+
+// 添加光
+const light = new THREE.AmbientLight({ color: "#404040" });
+scene.add(light);
+// 添加直线光
+
+const directLight = new THREE.DirectionalLight(0xffffff, 0.5);
+directLight.position.set(10, 10, 10);
+scene.add(directLight);
 
 const camera = new THREE.PerspectiveCamera(
   45,
@@ -87,7 +125,7 @@ gui
   .addColor({ color: "#00ff00" }, "color")
   .onChange((value) => {
     mesh.material.color.set(value);
-    console.log("🚀 ~ file: index.js ~ line 65 ~ gui.addColor ~ value", value);
+    // console.log("🚀 ~ file: index.js ~ line 65 ~ gui.addColor ~ value", value);
   })
   .name("颜色设置");
 gui.add(mesh, "visible").name("是否显示");
