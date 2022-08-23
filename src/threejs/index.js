@@ -7,92 +7,33 @@ const { BufferGeometry, Float32BufferAttribute } = THREE;
 
 const scene = new THREE.Scene();
 
-const events = {
-  onLoad: function () {
-    console.log("🚀 ~ file: index01法线贴图.js ~ line 12 ~ onLoad ~ onLoad");
-  },
-  onProgress: function () {
-    console.log(
-      "🚀 ~ file: index01法线贴图.js ~ line 16 ~ onProgress ~ onProgress",111111111111
-    );
-  },
-  onError: function () {
-    console.log("🚀 ~ file: index01法线贴图.js ~ line 20 ~ onError ~ onError");
-  },
-};
+// 目标:设置环境贴图
 
-const loadingManager = new THREE.LoadingManager(
-  events.onLoad,
-  events.onProgress,
-  events.onError
-);
-
-// 法线贴图、金属贴图、反射贴图
-// load texture
-const texture = new THREE.TextureLoader(loadingManager);
-const textureColor = texture.load("/door.png");
-// const textureColor = texture.load("/textures/minecraft.png");
-const alphaTextureColor = texture.load("/textures/door/alpha.jpg");
-const aoTextureColor = texture.load("/textures/door/ambientOcclusion.jpg");
-const heightTextureColor = texture.load("/textures/door/height.jpg");
-const roughnessTextureColor = texture.load("/textures/door/roughness.jpg");
-const metalnessTextureColor = texture.load("/textures/door/metalness.jpg");
-const normalTextureColor = texture.load("/textures/door/normal.jpg");
-
-// 设置纹理的偏移
-// textureColor.offset.set(0.5, 0.5);
-// 设置纹理的旋转原点
-// textureColor.center.set(0.5, 0.5)
-// 设置纹理重复
-// textureColor.repeat.set(2, 3);
-// // 设置纹理重复模式
-// textureColor.wrapS = THREE.MirroredRepeatWrapping;
-// textureColor.wrapT = THREE.RepeatWrapping;
-// 设置纹理的旋转角度
-// textureColor.rotation = Math.PI / 4;
-// 物体
-
-// 设置纹理的显示
-// textureColor.minFilter = THREE.NearestMipMapLinearFilter;
-// textureColor.magFilter = THREE.LinearFilter;
-const geometry = new THREE.BoxBufferGeometry(1, 1, 1, 50, 50, 50);
-geometry.setAttribute(
-  "uv2",
-  new THREE.BufferAttribute(geometry.attributes.uv.array, 2)
-);
-// 材质
+const cubeTextureLoader = new THREE.CubeTextureLoader();
+const envTexture = cubeTextureLoader.load([
+  "/textures/environmentMaps/1/px.jpg",
+  "/textures/environmentMaps/1/nx.jpg",
+  "/textures/environmentMaps/1/py.jpg",
+  "/textures/environmentMaps/1/ny.jpg",
+  "/textures/environmentMaps/1/pz.jpg",
+  "/textures/environmentMaps/1/nz.jpg",
+]);
+const sphereGeometry = new THREE.SphereBufferGeometry(1, 20, 20);
 const material = new THREE.MeshStandardMaterial({
-  color: "#ffff00",
-  map: textureColor,
-  alphaMap: alphaTextureColor,
-  transparent: true,
-  // opacity:0.3,
-  side: THREE.DoubleSide,
-  aoMap: aoTextureColor,
-  aoMapIntensity: 0.9,
-  displacementMap: heightTextureColor,
-  displacementScale: 0.05,
-  roughness: 1,
-  roughnessMap: roughnessTextureColor,
-  metalness: 1,
-  metalnessMap: metalnessTextureColor,
-  normalMap: normalTextureColor,
+  metalness: 0.7,
+  roughness: 0.1,
+  // envMap: envTexture,
 });
-// 实体
-const mesh = new THREE.Mesh(geometry, material);
+const sphere = new THREE.Mesh(sphereGeometry, material);
+scene.add(sphere);
 
-scene.add(mesh);
-
-// 添加平面
-const plane = new THREE.Mesh(new THREE.PlaneBufferGeometry(1, 1), material);
-plane.position.set(3, 0, 0);
-scene.add(plane);
+scene.background = envTexture;
+scene.environment = envTexture;
 
 // 添加光
 const light = new THREE.AmbientLight({ color: "#404040" });
 scene.add(light);
-// 添加直线光
-
+// 直线光
 const directLight = new THREE.DirectionalLight(0xffffff, 0.5);
 directLight.position.set(10, 10, 10);
 scene.add(directLight);
@@ -117,27 +58,6 @@ scene.add(axesHelper);
 // 创建轨道控制器
 const controls = new OrbitControls(camera, render.domElement);
 
-// mesh.rotation.set(Math.PI / 4, 0, 0, "XZY");
-// mesh.scale.set(3, 1, 1);
-
-const clock = new THREE.Clock();
-
-// 设置动画
-// gsap.to(mesh.position, {
-//   x: 5,
-//   duration: 5,
-//   ease: "power1.inOut",
-//   // 设置重复的次数
-//   repeat: -1,
-//   // 往返的运动
-//   yoyo: true,
-//   // 延迟时间
-//   delay: 2,
-//   onComplete: () => {
-//     console.log("🚀 ~ file: index.js ~ line 47 ~ 动画 onComplete");
-//   },
-// });
-// gsap.to(mesh.rotation, { x: 2 * Math.PI, duration: 5, repeat: -1 });
 function renderScene() {
   render.render(scene, camera);
 
@@ -146,24 +66,5 @@ function renderScene() {
 renderScene();
 
 const gui = new dat.GUI();
-gui.add(mesh.position, "x").min(0).max(5).step(0.01).name("设置X值");
-gui
-  .addColor({ color: "#00ff00" }, "color")
-  .onChange((value) => {
-    mesh.material.color.set(value);
-    // console.log("🚀 ~ file: index.js ~ line 65 ~ gui.addColor ~ value", value);
-  })
-  .name("颜色设置");
-gui.add(mesh, "visible").name("是否显示");
-gui
-  .add(
-    {
-      fun: () => {
-        gsap.to(mesh.rotation, { x: 2 * Math.PI, duration: 5, repeat: -1 });
-      },
-    },
-    "fun"
-  )
-  .name("开始旋转");
 
 export default THREE;
