@@ -7,29 +7,9 @@ const { BufferGeometry, Float32BufferAttribute } = THREE;
 
 const scene = new THREE.Scene();
 
-const events = {
-  onLoad: function () {
-    console.log("🚀 ~ file: index01法线贴图.js ~ line 12 ~ onLoad ~ onLoad");
-  },
-  onProgress: function () {
-    console.log(
-      "🚀 ~ file: index01法线贴图.js ~ line 16 ~ onProgress ~ onProgress",111111111111
-    );
-  },
-  onError: function () {
-    console.log("🚀 ~ file: index01法线贴图.js ~ line 20 ~ onError ~ onError");
-  },
-};
-
-const loadingManager = new THREE.LoadingManager(
-  events.onLoad,
-  events.onProgress,
-  events.onError
-);
-
 // 法线贴图、金属贴图、反射贴图
 // load texture
-const texture = new THREE.TextureLoader(loadingManager);
+const texture = new THREE.TextureLoader();
 const textureColor = texture.load("/door.png");
 // const textureColor = texture.load("/textures/minecraft.png");
 const alphaTextureColor = texture.load("/textures/door/alpha.jpg");
