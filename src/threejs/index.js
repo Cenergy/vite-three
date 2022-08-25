@@ -24,7 +24,7 @@ scene.add(sphere);
 // 设置物体投射阴影
 sphere.castShadow = true;
 
-const planeGeometry = new THREE.PlaneBufferGeometry(20, 20);
+const planeGeometry = new THREE.PlaneBufferGeometry(50, 50);
 const plane = new THREE.Mesh(planeGeometry, material);
 plane.rotation.x = -Math.PI / 2;
 plane.position.set(0, -1, 0);
@@ -36,23 +36,30 @@ plane.receiveShadow = true;
 const light = new THREE.AmbientLight(0xffffff, 0.5);
 scene.add(light);
 // 直线光
-const directLight = new THREE.DirectionalLight(0xffffff, 0.5);
-directLight.position.set(10, 10, 10);
-scene.add(directLight);
+const spotLight = new THREE.SpotLight(0xffffff, 0.5);
+spotLight.position.set(5, 5, 5);
+scene.add(spotLight);
 // 设置光照投射阴影
-directLight.castShadow = true;
+spotLight.castShadow = true;
 // 设置阴影贴图模糊度
-directLight.shadow.radius = 20;
+spotLight.shadow.radius = 20;
 // 设置阴影贴图的分辨率
-directLight.shadow.mapSize.set(2048, 2048);
+spotLight.shadow.mapSize.set(2048, 2048);
+
+spotLight.target = sphere;
+
+spotLight.angle = Math.PI / 6;
+spotLight.distance = 0;
+spotLight.penumbra = 0.5;
+spotLight.decay = 0;
 
 // 设置平行光相机投射相机的属性
-directLight.shadow.camera.near = 0.5;
-directLight.shadow.camera.far = 500;
-directLight.shadow.camera.top = 5;
-directLight.shadow.camera.bottom = -5;
-directLight.shadow.camera.right = 5;
-directLight.shadow.camera.left = -5;
+// directLight.shadow.camera.near = 0.5;
+// directLight.shadow.camera.far = 500;
+// directLight.shadow.camera.top = 5;
+// directLight.shadow.camera.bottom = -5;
+// directLight.shadow.camera.right = 5;
+// directLight.shadow.camera.left = -5;
 
 const camera = new THREE.PerspectiveCamera(
   45,
@@ -62,20 +69,18 @@ const camera = new THREE.PerspectiveCamera(
 );
 camera.position.set(0, 0, 10);
 
-gui
-  .add(directLight.shadow.camera, "near")
-  .min(0)
-  .max(20)
-  .step(0.1)
-  .onChange(() => {
-    directLight.shadow.camera.updateProjectionMatrix();
-  });
+gui.add(sphere.position, "x").min(-20).max(20).step(0.1);
+gui.add(spotLight, "angle").min(0).max(Math.PI).step(0.1);
+gui.add(spotLight, "distance").min(10).max(20).step(0.1);
+gui.add(spotLight, "penumbra").min(0).max(1).step(0.1);
+gui.add(spotLight, "decay").min(0).max(5).step(0.1);
 
 const render = new THREE.WebGLRenderer();
 render.setSize(window.innerWidth, window.innerHeight);
 
 // 开启对阴影的渲染
 render.shadowMap.enabled = true;
+render.physicallyCorrectLights = true;
 
 document.body.appendChild(render.domElement);
 
