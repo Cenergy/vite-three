@@ -41,18 +41,6 @@ directLight.position.set(10, 10, 10);
 scene.add(directLight);
 // 设置光照投射阴影
 directLight.castShadow = true;
-// 设置阴影贴图模糊度
-directLight.shadow.radius = 20;
-// 设置阴影贴图的分辨率
-directLight.shadow.mapSize.set(2048, 2048);
-
-// 设置平行光相机投射相机的属性
-directLight.shadow.camera.near = 0.5;
-directLight.shadow.camera.far = 500;
-directLight.shadow.camera.top = 5;
-directLight.shadow.camera.bottom = -5;
-directLight.shadow.camera.right = 5;
-directLight.shadow.camera.left = -5;
 
 const camera = new THREE.PerspectiveCamera(
   45,
@@ -61,15 +49,6 @@ const camera = new THREE.PerspectiveCamera(
   500
 );
 camera.position.set(0, 0, 10);
-
-gui
-  .add(directLight.shadow.camera, "near")
-  .min(0)
-  .max(20)
-  .step(0.1)
-  .onChange(() => {
-    directLight.shadow.camera.updateProjectionMatrix();
-  });
 
 const render = new THREE.WebGLRenderer();
 render.setSize(window.innerWidth, window.innerHeight);
