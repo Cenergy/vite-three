@@ -10,7 +10,7 @@ const { BufferGeometry, Float32BufferAttribute } = THREE;
 const scene = new THREE.Scene();
 const gui = new dat.GUI();
 
-// 目标:点光源
+// 目标:聚光灯
 // 1、材质要满足对光照有反应
 // 2、设置渲染器开启阴影的计算 render.shadowMap.enabled=true
 // 3、设置光照投射阴影 directionLight.castShadow=true
@@ -34,31 +34,24 @@ plane.receiveShadow = true;
 
 // 添加光
 const light = new THREE.AmbientLight(0xffffff, 0.5);
-
-const smallBall = new THREE.Mesh(
-  new THREE.SphereBufferGeometry(0.05, 20, 20),
-  new THREE.MeshBasicMaterial({ color: "red" })
-);
-light.position.set(5, 5, 5);
-smallBall.position.set(2, 2, 2);
-
+scene.add(light);
 // 直线光
-const pointLight = new THREE.PointLight(0xffffff, 1);
-// pointLight.position.set(2, 2, 2);
-scene.add(pointLight);
+const spotLight = new THREE.SpotLight(0xffffff, 0.5);
+spotLight.position.set(5, 5, 5);
+scene.add(spotLight);
 // 设置光照投射阴影
-pointLight.castShadow = true;
+spotLight.castShadow = true;
 // 设置阴影贴图模糊度
-pointLight.shadow.radius = 20;
+spotLight.shadow.radius = 20;
 // 设置阴影贴图的分辨率
-pointLight.shadow.mapSize.set(2048, 2048);
-smallBall.add(pointLight);
-scene.add(smallBall);
+spotLight.shadow.mapSize.set(2048, 2048);
 
+spotLight.target = sphere;
 
-pointLight.angle = Math.PI / 6;
-pointLight.distance = 0;
-pointLight.decay = 0;
+spotLight.angle = Math.PI / 6;
+spotLight.distance = 0;
+spotLight.penumbra = 0.5;
+spotLight.decay = 0;
 
 // 设置平行光相机投射相机的属性
 // directLight.shadow.camera.near = 0.5;
@@ -77,9 +70,10 @@ const camera = new THREE.PerspectiveCamera(
 camera.position.set(0, 0, 10);
 
 gui.add(sphere.position, "x").min(-20).max(20).step(0.1);
-gui.add(pointLight, "angle").min(0).max(Math.PI).step(0.1);
-gui.add(pointLight, "distance").min(10).max(20).step(0.1);
-gui.add(pointLight, "decay").min(0).max(5).step(0.1);
+gui.add(spotLight, "angle").min(0).max(Math.PI).step(0.1);
+gui.add(spotLight, "distance").min(10).max(20).step(0.1);
+gui.add(spotLight, "penumbra").min(0).max(1).step(0.1);
+gui.add(spotLight, "decay").min(0).max(5).step(0.1);
 
 const render = new THREE.WebGLRenderer();
 render.setSize(window.innerWidth, window.innerHeight);
@@ -96,14 +90,9 @@ scene.add(axesHelper);
 
 // 创建轨道控制器
 const controls = new OrbitControls(camera, render.domElement);
-const clock = new THREE.Clock();
 
 function renderScene() {
-  const time = clock.getElapsedTime();
-  smallBall.position.x = Math.sin(time) * 3;
-  smallBall.position.z = Math.cos(time) * 3;
   render.render(scene, camera);
-  controls.update();
 
   requestAnimationFrame(renderScene);
 }
