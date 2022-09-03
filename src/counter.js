@@ -4,8 +4,12 @@
 // // 水田一色项目
 // import islandProject from "./islandProject";
 
-// 地月模型
-import earthAndMoon from "./earthAndMoon";
+// // 地月模型
+// import earthAndMoon from "./earthAndMoon";
+
+// points的基础练习
+
+import points from "./points";
 
 export function setupCounter(element) {
   let counter = 0;
