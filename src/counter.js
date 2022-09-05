@@ -9,7 +9,12 @@
 
 // points的基础练习
 
-import points from "./points";
+// import points from "./points";
+
+// raycaster
+
+import raycaster from "./raycaster";
+
 
 export function setupCounter(element) {
   let counter = 0;
