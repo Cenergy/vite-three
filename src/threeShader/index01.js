@@ -1,10 +1,8 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
-import vertexShader from "./shaders/raw/vertex.glsl";
-import fragmentShader from "./shaders/raw/fragment.glsl";
-
-// 使用rawShaderMaterial
+import vertexShader from "./shaders/basic/vertex.glsl";
+import fragmentShader from "./shaders/basic/fragment.glsl";
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(
@@ -28,26 +26,16 @@ scene.add(axesHelper);
 
 const planeGeometry = new THREE.PlaneGeometry(1, 1, 64, 64);
 // const planeMaterial = new THREE.MeshBasicMaterial({ color: "red" });
-const planeMaterial = new THREE.RawShaderMaterial({
+const planeMaterial = new THREE.ShaderMaterial({
   vertexShader,
   fragmentShader,
-  wireframe: true,
-  side: THREE.DoubleSide,
-  uniforms: {
-    uTime: {
-      value: 0,
-    },
-  },
 });
 const plane = new THREE.Mesh(planeGeometry, planeMaterial);
 // plane.rotation.x = -Math.PI / 2;
 
 scene.add(plane);
-const clock = new THREE.Clock();
 
 function render(params) {
-  const elapsedTime = clock.getElapsedTime();
-  planeMaterial.uniforms.uTime.value = elapsedTime;
   renderer.render(scene, camera);
   requestAnimationFrame(render);
 }
