@@ -26,16 +26,22 @@ const controls = new OrbitControls(camera, renderer.domElement);
 const axesHelper = new THREE.AxesHelper(5);
 scene.add(axesHelper);
 
+const textureLoader = new THREE.TextureLoader();
+const texture = textureLoader.load("/textures/ca.jpeg");
+
 const planeGeometry = new THREE.PlaneGeometry(1, 1, 64, 64);
 // const planeMaterial = new THREE.MeshBasicMaterial({ color: "red" });
 const planeMaterial = new THREE.RawShaderMaterial({
   vertexShader,
   fragmentShader,
-  wireframe: true,
+  // wireframe: true,
   side: THREE.DoubleSide,
   uniforms: {
     uTime: {
       value: 0,
+    },
+    uTexture: {
+      value: texture,
     },
   },
 });
