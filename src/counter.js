@@ -17,7 +17,9 @@
 
 // import fullScroll from "./fullScroll";
 
-import rawShader from "./rawShader";
+// import rawShader from "./rawShader";
+
+import threeShader from "./threeShader";
 
 export function setupCounter(element) {
   let counter = 0;

@@ -14,11 +14,8 @@ gl.shaderSource(
   vertexShader,
   `
  attribute vec4 a_Position;
- uniform mat4 u_Mat;
- varying vec4 v_Color;
  void main(){
-    gl_Position = a_Position*u_Mat;
-    v_Color=gl_Position;
+    gl_Position = a_Position;
  }
  `
 );
@@ -32,9 +29,8 @@ gl.shaderSource(
   fragmentShader,
   `
  precision mediump float;
- varying vec4 v_Color;
  void main(){
-     gl_FragColor= v_Color;
+     gl_FragColor= vec4(1.0,0.0,0.0,1.0);
  }
 `
 );
@@ -72,60 +68,7 @@ gl.vertexAttribPointer(a_Position, 2, gl.FLOAT, false, 0, 0);
 // 启用顶点着色器中的a_Position变量
 gl.enableVertexAttribArray(a_Position);
 
-let scale = 0.5;
-let mat = new Float32Array([
-  scale,
-  0.0,
-  0.0,
-  0.0,
-  0.0,
-  scale,
-  0.0,
-  0.0,
-  0.0,
-  0.0,
-  scale,
-  0.0,
-  0.0,
-  0.0,
-  0.0,
-  1.0,
-]);
-const u_Mat = gl.getUniformLocation(program, "u_Mat");
-gl.uniformMatrix4fv(u_Mat, false, mat);
-
-// 清除canvas
-gl.clearColor(0.0, 0.0, 0.0, 0.0);
-gl.clear(gl.COLOR_BUFFER_BIT);
-
 // 绘制三角形
 gl.drawArrays(gl.TRIANGLES, 0, 3);
-
-function animate() {
-  scale -= 0.01;
-  let mat = new Float32Array([
-    scale,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    scale,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    scale,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    1.0,
-  ]);
-  const u_Mat = gl.getUniformLocation(program, "u_Mat");
-  gl.uniformMatrix4fv(u_Mat, false, mat);
-  gl.drawArrays(gl.TRIANGLES, 0, 3);
-  requestAnimationFrame(animate);
-}
-animate();
 
 export default {};
