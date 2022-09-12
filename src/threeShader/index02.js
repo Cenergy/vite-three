@@ -1,10 +1,10 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
-import vertexShader from "./shaders/deep/vertex.glsl";
-import fragmentShader from "./shaders/deep/fragment.glsl";
+import vertexShader from "./shaders/raw/vertex.glsl";
+import fragmentShader from "./shaders/raw/fragment.glsl";
 
-// 使用deep中的着色器
+// 使用rawShaderMaterial
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(
@@ -13,7 +13,7 @@ const camera = new THREE.PerspectiveCamera(
   0.1,
   100
 );
-camera.position.set(0, 0, 5);
+camera.position.set(30, 40, 50);
 scene.add(camera);
 
 const renderer = new THREE.WebGLRenderer({ alpha: true });
@@ -36,7 +36,6 @@ const planeMaterial = new THREE.RawShaderMaterial({
   fragmentShader,
   // wireframe: true,
   side: THREE.DoubleSide,
-  transparent: true,
   uniforms: {
     uTime: {
       value: 0,
