@@ -9,21 +9,17 @@ uniform float uTime;
 #define PI 3.1415926535897932384626433832795
 
 // 随机函数
-float random (vec2 st) {
-    return fract(sin(dot(st.xy,vec2(12.9898,78.233)))*43758.5453123);
+float random(vec2 st) {
+    return fract(sin(dot(st.xy, vec2(12.9898, 78.233))) * 43758.5453123);
 }
 
 // 旋转函数
-vec2 rotate(vec2 uv, float rotation, vec2 mid)
-{
-    return vec2(
-      cos(rotation) * (uv.x - mid.x) + sin(rotation) * (uv.y - mid.y) + mid.x,
-      cos(rotation) * (uv.y - mid.y) - sin(rotation) * (uv.x - mid.x) + mid.y
-    );
+vec2 rotate(vec2 uv, float rotation, vec2 mid) {
+    return vec2(cos(rotation) * (uv.x - mid.x) + sin(rotation) * (uv.y - mid.y) + mid.x, cos(rotation) * (uv.y - mid.y) - sin(rotation) * (uv.x - mid.x) + mid.y);
 }
 
 // 噪声函数
-float noise (in vec2 _st) {
+float noise(in vec2 _st) {
     vec2 i = floor(_st);
     vec2 f = fract(_st);
 
@@ -36,26 +32,22 @@ float noise (in vec2 _st) {
     vec2 u = f * f * (3.0 - 2.0 * f);
 
     return mix(a, b, u.x) +
-            (c - a)* u.y * (1.0 - u.x) +
-            (d - b) * u.x * u.y;
+        (c - a) * u.y * (1.0 - u.x) +
+        (d - b) * u.x * u.y;
 }
-
 
 //	Classic Perlin 2D Noise 
 //	by Stefan Gustavson
 //
-vec4 permute(vec4 x)
-{
-    return mod(((x*34.0)+1.0)*x, 289.0);
+vec4 permute(vec4 x) {
+    return mod(((x * 34.0) + 1.0) * x, 289.0);
 }
 
-vec2 fade(vec2 t)
-{
-    return t*t*t*(t*(t*6.0-15.0)+10.0);
+vec2 fade(vec2 t) {
+    return t * t * t * (t * (t * 6.0 - 15.0) + 10.0);
 }
 
-float cnoise(vec2 P)
-{
+float cnoise(vec2 P) {
     vec4 Pi = floor(P.xyxy) + vec4(0.0, 0.0, 1.0, 1.0);
     vec4 Pf = fract(P.xyxy) - vec4(0.0, 0.0, 1.0, 1.0);
     Pi = mod(Pi, 289.0); // To avoid truncation effects in permutation
@@ -68,10 +60,10 @@ float cnoise(vec2 P)
     vec4 gy = abs(gx) - 0.5;
     vec4 tx = floor(gx + 0.5);
     gx = gx - tx;
-    vec2 g00 = vec2(gx.x,gy.x);
-    vec2 g10 = vec2(gx.y,gy.y);
-    vec2 g01 = vec2(gx.z,gy.z);
-    vec2 g11 = vec2(gx.w,gy.w);
+    vec2 g00 = vec2(gx.x, gy.x);
+    vec2 g10 = vec2(gx.y, gy.y);
+    vec2 g01 = vec2(gx.z, gy.z);
+    vec2 g11 = vec2(gx.w, gy.w);
     vec4 norm = 1.79284291400159 - 0.85373472095314 * vec4(dot(g00, g00), dot(g01, g01), dot(g10, g10), dot(g11, g11));
     g00 *= norm.x;
     g01 *= norm.y;
@@ -86,7 +78,6 @@ float cnoise(vec2 P)
     float n_xy = mix(n_x.x, n_x.y, fade_xy.y);
     return 2.3 * n_xy;
 }
-
 
 void main() {
     // 通过顶点对应的uv，决定每一个像素在uv图像的位置，决定x,y的颜色
@@ -169,7 +160,7 @@ void main() {
     // // // distance计算两个向量的距离
     // float strength = 0.15 / distance(vec2(vUv.x, (vUv.y - 0.5) * 5.0 + 0.5), vec2(0.5, 0.5))-1.0;
     // gl_FragColor = vec4(strength, strength, strength, 1.0);
-    
+
     // // // 飞镖
     // float strength = 0.15 / distance(vec2(vUv.x, (vUv.y - 0.5) * 5.0 + 0.5), vec2(0.5, 0.5))-1.0;
     // strength += 0.15 / distance(vec2(vUv.y, (vUv.x - 0.5) * 5.0 + 0.5), vec2(0.5, 0.5))-1.0;
@@ -186,8 +177,40 @@ void main() {
     // gl_FragColor =vec4(strength,strength,strength,1);
 
     // 32圆环
-    float strength = step(0.5,distance(vUv,vec2(0.5))+0.35) ;
-    strength *= (1.0 - step(0.5,distance(vUv,vec2(0.5))+0.25)) ;
-    gl_FragColor =vec4(strength,strength,strength,strength);
+    // float strength = step(0.5, distance(vUv, vec2(0.5)) + 0.35);
+    // strength *= (1.0 - step(0.5, distance(vUv, vec2(0.5)) + 0.25));
+    // gl_FragColor = vec4(strength, strength, strength, strength);
 
+    // 根据角度显示
+    // float angle = atan(vUv.x, vUv.y);
+    // float strength = angle;
+    // gl_FragColor = vec4(strength, strength, strength, 1.0);
+
+    // 根据角度实现螺旋渐变
+    // float angle = atan(vUv.x - 0.5, vUv.y - 0.5);
+    // float strength = (angle + 3.14) / 6.28;
+    // gl_FragColor = vec4(strength, strength, strength, 1.0);
+
+    // 静态雷达
+    // float alpha = 1.0 - step(0.5, distance(vUv, vec2(0.5)));
+    // float angle = atan(vUv.x - 0.5, vUv.y - 0.5);
+    // float strength = (angle + 3.14) / 6.28;
+    // gl_FragColor = vec4(strength, strength, strength, alpha);
+
+    // // 动态雷达
+    // vec2 rotateUv = rotate(vUv, -uTime * 2.0, vec2(0.5));
+    // float alpha = 1.0 - step(0.5, distance(vUv, vec2(0.5)));
+    // float angle = atan(rotateUv.x - 0.5, rotateUv.y - 0.5);
+    // float strength = (angle + 3.14) / 6.28;
+    // gl_FragColor = vec4(strength, strength, strength, alpha);
+
+    // // 万花筒
+    // float angle = atan(vUv.x - 0.5, vUv.y - 0.5) / (2.0 * PI);
+    // float strength = mod(angle * 10.0, 1.0);
+    // gl_FragColor = vec4(strength, strength, strength, 1.0);
+
+    // // 光芒四射
+    float angle = atan(vUv.x - 0.5, vUv.y - 0.5) / (2.0 * PI);
+    float strength = sin(angle * 50.0);
+    gl_FragColor = vec4(strength, strength, strength, 1.0);
 }
