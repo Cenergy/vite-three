@@ -1,8 +1,13 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
-import vertexShader from "./shaders/deep/vertex.glsl";
-import fragmentShader from "./shaders/deep/fragment.glsl";
+import vertexShader from "./shaders/flyLight/vertex.glsl";
+import fragmentShader from "./shaders/flyLight/fragment.glsl";
+
+import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+
+import gsap from "gsap";
 
 // 使用deep中的着色器
 
@@ -11,13 +16,26 @@ const camera = new THREE.PerspectiveCamera(
   75,
   window.innerWidth / window.innerHeight,
   0.1,
-  100
+  500
 );
 camera.position.set(0, 0, 5);
 scene.add(camera);
 
+const rgbeLoader = new RGBELoader();
+rgbeLoader.loadAsync("/textures/hdr/2k.hdr").then((texture) => {
+  texture.mapping = THREE.EquirectangularReflectionMapping;
+  scene.environment = texture;
+  scene.background = texture;
+});
+
+const gltfLoader = new GLTFLoader();
+
 const renderer = new THREE.WebGLRenderer({ alpha: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
+
+renderer.outputEncoding = THREE.sRGBEncoding;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 0.2;
 
 document.body.appendChild(renderer.domElement);
 
@@ -46,15 +64,54 @@ const planeMaterial = new THREE.RawShaderMaterial({
     },
   },
 });
-const plane = new THREE.Mesh(planeGeometry, planeMaterial);
+
+// 创建着色器材质;
+const shaderMaterial = new THREE.ShaderMaterial({
+  vertexShader: vertexShader,
+  fragmentShader: fragmentShader,
+  uniforms: {},
+  side: THREE.DoubleSide,
+  //   transparent: true,
+});
+
+gltfLoader.load("/model/flyLight.glb", (gltf) => {
+  // scene.add(gltf.scene);
+  const lightBox = gltf.scene.children[1];
+  lightBox.material = shaderMaterial;
+  const group = new THREE.Group();
+
+  for (let i = 0; i < 150; i++) {
+    let flyLight = gltf.scene.clone(true);
+    let x = (Math.random() - 0.5) * 300;
+    let z = (Math.random() - 0.5) * 300;
+    let y = Math.random() * 60 + 25;
+    flyLight.position.set(x, y, z);
+    gsap.to(flyLight.rotation, {
+      y: 2 * Math.PI,
+      duration: 10 + Math.random() * 30,
+      repeat: -1,
+    });
+    gsap.to(flyLight.position, {
+      x: "+=" + Math.random() * 5,
+      y: "+=" + Math.random() * 20,
+      yoyo: true,
+      duration: 5 + Math.random() * 10,
+      repeat: -1,
+    });
+    group.add(flyLight);
+  }
+  scene.add(group);
+
+});
+
+const plane = new THREE.Mesh(planeGeometry, shaderMaterial);
 // plane.rotation.x = -Math.PI / 2;
 
-scene.add(plane);
+// scene.add(plane);
 const clock = new THREE.Clock();
 
 function render(params) {
   const elapsedTime = clock.getElapsedTime();
-  planeMaterial.uniforms.uTime.value = elapsedTime;
   renderer.render(scene, camera);
   requestAnimationFrame(render);
 }

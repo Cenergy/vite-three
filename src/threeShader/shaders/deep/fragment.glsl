@@ -210,7 +210,32 @@ void main() {
     // gl_FragColor = vec4(strength, strength, strength, 1.0);
 
     // // 光芒四射
-    float angle = atan(vUv.x - 0.5, vUv.y - 0.5) / (2.0 * PI);
-    float strength = sin(angle * 50.0);
-    gl_FragColor = vec4(strength, strength, strength, 1.0);
+    // float angle = atan(vUv.x - 0.5, vUv.y - 0.5) / (2.0 * PI);
+    // float strength = sin(angle * 50.0);
+    // gl_FragColor = vec4(strength, strength, strength, 1.0);
+
+    // // 波纹效果
+    // float strength = sin(cnoise(vUv*10.0)*5.0+uTime);
+    // gl_FragColor = vec4(strength, strength, strength, 1.0);
+
+    // float strength = step(0.9, sin(cnoise(vUv * 10.0) * 20.0));
+    // gl_FragColor = vec4(strength, strength, strength, 1.0);
+
+    // 使用混合函数混颜色
+    // vec3 blackColor = vec3(1.0, 0.0, 1.0);
+    // vec3 yellowColor = vec3(1.0, 1.0, 0.0);
+
+    // float strength = step(0.9, sin(cnoise(vUv * 10.0) * 20.0 + uTime));
+    // vec3 mixColor = mix(blackColor, yellowColor, strength);
+
+    // gl_FragColor = vec4(mixColor, 1.0);
+
+    // 使用混合函数混颜色
+    vec3 blackColor = vec3(1.0, 0.0, 1.0);
+    vec3 yellowColor = vec3(1.0, 1.0, 0.0);
+    vec3 uvColor = vec3(vUv, 1.0);
+
+    float strength = step(0.9, sin(cnoise(vUv * 10.0) * 20.0 + uTime));
+    vec3 mixColor = mix(uvColor, blackColor, strength);
+    gl_FragColor = vec4(mixColor, 1.0);
 }
