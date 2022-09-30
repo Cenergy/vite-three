@@ -3,13 +3,14 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
 import vertexShader from "./shaders/firework/vertex.glsl";
 import fragmentShader from "./shaders/firework/fragment.glsl";
+import Fireworks from "./shaders/firework/firework";
 
 import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 
 import gsap from "gsap";
 
-// 孔明灯
+// 烟花
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(
@@ -28,14 +29,12 @@ rgbeLoader.loadAsync("/textures/hdr/2k.hdr").then((texture) => {
   scene.background = texture;
 });
 
-const gltfLoader = new GLTFLoader();
-
 const renderer = new THREE.WebGLRenderer({ alpha: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 
 renderer.outputEncoding = THREE.sRGBEncoding;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 0.1;
+renderer.toneMappingExposure = 0.3;
 
 document.body.appendChild(renderer.domElement);
 
@@ -44,77 +43,40 @@ const controls = new OrbitControls(camera, renderer.domElement);
 const axesHelper = new THREE.AxesHelper(5);
 scene.add(axesHelper);
 
-const textureLoader = new THREE.TextureLoader();
-const texture = textureLoader.load("/textures/ca.jpeg");
-
-const planeGeometry = new THREE.PlaneGeometry(1, 1, 64, 64);
-// const planeMaterial = new THREE.MeshBasicMaterial({ color: "red" });
-const planeMaterial = new THREE.RawShaderMaterial({
-  vertexShader,
-  fragmentShader,
-  // wireframe: true,
-  side: THREE.DoubleSide,
-  transparent: true,
-  uniforms: {
-    uTime: {
-      value: 0,
-    },
-    uTexture: {
-      value: texture,
-    },
-  },
-});
-
-// 创建着色器材质;
-const shaderMaterial = new THREE.ShaderMaterial({
-  vertexShader: vertexShader,
-  fragmentShader: fragmentShader,
-  uniforms: {},
-  side: THREE.DoubleSide,
-  //   transparent: true,
-});
-
-gltfLoader.load("/model/flyLight.glb", (gltf) => {
-  // scene.add(gltf.scene);
-  const lightBox = gltf.scene.children[1];
-  lightBox.material = shaderMaterial;
-  const group = new THREE.Group();
-
-  for (let i = 0; i < 150; i++) {
-    let flyLight = gltf.scene.clone(true);
-    let x = (Math.random() - 0.5) * 300;
-    let z = (Math.random() - 0.5) * 300;
-    let y = Math.random() * 60 + 25;
-    flyLight.position.set(x, y, z);
-    gsap.to(flyLight.rotation, {
-      y: 2 * Math.PI,
-      duration: 10 + Math.random() * 30,
-      repeat: -1,
-    });
-    gsap.to(flyLight.position, {
-      x: "+=" + Math.random() * 5,
-      y: "+=" + Math.random() * 20,
-      yoyo: true,
-      duration: 5 + Math.random() * 10,
-      repeat: -1,
-    });
-    group.add(flyLight);
-  }
-  scene.add(group);
-});
-
-const plane = new THREE.Mesh(planeGeometry, shaderMaterial);
 // plane.rotation.x = -Math.PI / 2;
 
 // scene.add(plane);
 const clock = new THREE.Clock();
 
+// 管理烟花
+const fireworks = [];
+// 设置创建烟花函数
+let createFireworks = () => {
+  let color = `hsl(${Math.floor(Math.random() * 360)},100%,80%)`;
+  let position = {
+    x: (Math.random() - 0.5) * 40,
+    z: -(Math.random() - 0.5) * 40,
+    y: 3 + Math.random() * 15,
+  };
+
+  // 随机生成颜色和烟花放的位置
+  let firework = new Fireworks(color, position);
+  console.log(
+    "🚀 ~ file: index.js ~ line 108 ~ createFireworks ~ firework",
+    firework
+  );
+  firework.addScene(scene, camera);
+  fireworks.push(firework);
+};
+
 function render(params) {
-  const elapsedTime = clock.getElapsedTime();
   renderer.render(scene, camera);
+  fireworks.forEach((fw) => fw.update());
   requestAnimationFrame(render);
 }
 
 render();
+
+document.addEventListener("click", createFireworks);
 
 export default {};
