@@ -3,7 +3,7 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import * as THREE from "three";
 import scene from "./scene";
 import gsap from "gsap";
-import createCity from "./mesh/City";
+import createCity from "./mesh/city";
 
 export default function createMesh() {
   createCity();
