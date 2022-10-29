@@ -4,6 +4,7 @@ import scene from "../scene";
 import modifyCityMaterial from "../modify/modifyCityMaterial";
 
 import FlyLine from "./flyLine";
+import FlyLineShader from "./flyLineShader";
 
 export default function createCity() {
   const gltfLoader = new GLTFLoader();
@@ -23,4 +24,8 @@ export default function createCity() {
   // 添加飞线
   const flyLine = new FlyLine();
   scene.add(flyLine.mesh);
+
+  // 添加着色器飞线
+  const flyLineShader = new FlyLineShader();
+  scene.add(flyLineShader.mesh);
 }

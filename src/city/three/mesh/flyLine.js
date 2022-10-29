@@ -25,9 +25,11 @@ export default class FlyLine {
       color: 0xfff000,
       map: this.texture,
       transparent: true,
+      // depthWrite:false
     });
     this.mesh = new THREE.Mesh(this.geometry, this.material);
 
+    // this.texture offset的范围是[-1,1]
     gsap.to(this.texture.offset, {
       x: -1,
       duration: 1,
