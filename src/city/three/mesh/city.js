@@ -5,6 +5,7 @@ import modifyCityMaterial from "../modify/modifyCityMaterial";
 
 import FlyLine from "./flyLine";
 import FlyLineShader from "./flyLineShader";
+import MeshLine from "./meshLine";
 
 export default function createCity() {
   const gltfLoader = new GLTFLoader();
@@ -16,6 +17,17 @@ export default function createCity() {
         });
         children.material = cityMaterial;
         modifyCityMaterial(children);
+        console.log(
+          "🚀 ~ file: city.js ~ line 21 ~ gltf.scene.traverse ~ children",
+          children
+        );
+        if (children.name === "Layerbuildings") {
+          // 添加建筑边框
+          const meshLine = new MeshLine(children.geometry);
+          const size=children.scale.x*1.01;
+          meshLine.mesh.scale.set(size, size, size);
+          scene.add(meshLine.mesh);
+        }
       }
     });
 
