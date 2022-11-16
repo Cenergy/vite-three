@@ -5,9 +5,9 @@ export default function modifyCityMaterial(mesh) {
   mesh.material.onBeforeCompile = (shader) => {
     addFragmentFlagPoint(shader);
     addGradColor(shader, mesh);
-    addSpread(shader, mesh);
-    addLightLine(shader, mesh);
-    addToTopLine(shader, mesh);
+    // addSpread(shader, mesh);
+    // addLightLine(shader, mesh);
+    // addToTopLine(shader, mesh);
   };
 }
 export function addFragmentFlagPoint(shader) {
@@ -170,7 +170,6 @@ export function addToTopLine(shader, mesh) {
     if(ToTopValue>0.0){
       gl_FragColor=mix(gl_FragColor,vec4(1.0,0.8,0.8,1.0),ToTopValue/uToTopWidth);
     }
-
     //#end#
     `
   );

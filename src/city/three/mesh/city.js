@@ -6,6 +6,8 @@ import modifyCityMaterial from "../modify/modifyCityMaterial";
 import FlyLine from "./flyLine";
 import FlyLineShader from "./flyLineShader";
 import MeshLine from "./meshLine";
+import LightWall from "./lightWall";
+import LightRadar from "./lightRadar";
 
 export default function createCity() {
   const gltfLoader = new GLTFLoader();
@@ -17,10 +19,7 @@ export default function createCity() {
         });
         children.material = cityMaterial;
         modifyCityMaterial(children);
-        console.log(
-          "🚀 ~ file: city.js ~ line 21 ~ gltf.scene.traverse ~ children",
-          children
-        );
+  
         if (children.name === "Layerbuildings") {
           // 添加建筑边框
           const meshLine = new MeshLine(children.geometry);
@@ -40,4 +39,12 @@ export default function createCity() {
   // 添加着色器飞线
   const flyLineShader = new FlyLineShader();
   scene.add(flyLineShader.mesh);
+
+  // 添加光墙
+  const lightWall = new LightWall();
+  scene.add(lightWall.mesh);
+
+  // 添加雷达
+  const lightRadar = new LightRadar();
+  scene.add(lightRadar.mesh);
 }
