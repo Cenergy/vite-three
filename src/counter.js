@@ -24,7 +24,13 @@
 // 智慧城市
 // import city from "./city";
 
-import factory from "./factory";
+// import factory from "./factory";
+
+// cesium 基础
+import cesiumBase from "./cesiumBase";
+
+// cesium 基础城市场景
+import cesiumBaseCity from "./cesiumBaseCity";
 
 export function setupCounter(element) {
   let counter = 0;
