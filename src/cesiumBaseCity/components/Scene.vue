@@ -9,6 +9,8 @@ import { onMounted } from "vue";
 import initViewer from "../ cesium/initViewer";
 import MousePosition from "../ cesium/mousePosition";
 import modifyMap from "../ cesium/modifyMap";
+import modifyBuilding from "../ cesium/modifyBuilding";
+import LightCone from "../ cesium/lightCone";
 
 // 设置cesium token
 Cesium.Ion.defaultAccessToken =
@@ -17,7 +19,9 @@ Cesium.Ion.defaultAccessToken =
 onMounted(() => {
   const viewer = initViewer();
   const mousePosition = new MousePosition(viewer);
-  modifyMap(viewer)
+  modifyMap(viewer);
+  modifyBuilding(viewer);
+  const lightCone = new LightCone(viewer);
 
   // hide logo
   viewer.cesiumWidget.creditContainer.style.display = "none";
@@ -29,7 +33,7 @@ onMounted(() => {
     // 纬度
     23.109,
     // 高度
-    100000
+    1000
   );
   viewer.camera.flyTo({
     destination: position,
